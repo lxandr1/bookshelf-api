@@ -204,7 +204,7 @@ module.exports = {
 
     const finished = pageCount === readPage;
     const updatedAt = new Date().toISOString();
-    const index = books.findIndex((note) => note.id === bookId); // find book by id
+    const index = books.findIndex((note) => note.id === bookId);
 
     if (index !== -1) {
       books[index] = {
