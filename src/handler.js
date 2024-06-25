@@ -34,11 +34,7 @@ module.exports = {
     }
 
     const id = nanoid(16);
-    const finished = pageCount === readPage;
-    const insertedAt = new Date().toISOString();
-    const updatedAt = insertedAt;
-
-    const newBook = {
+    books.push({
       name,
       year,
       author,
@@ -46,18 +42,14 @@ module.exports = {
       publisher,
       pageCount,
       readPage,
-      finished,
+      finished: pageCount === readPage,
       reading,
       id,
-      insertedAt,
-      updatedAt,
-    };
+      insertedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
 
-    books.push(newBook);
-
-    const isSuccess = books.filter((book) => book.id === id).length > 0;
-
-    if (isSuccess) {
+    if (books.filter((book) => book.id === id).length > 0) {
       const response = h.response({
         status: "success",
         message: "Buku berhasil ditambahkan",
@@ -68,13 +60,6 @@ module.exports = {
       response.code(201);
       return response;
     }
-
-    const response = h.response({
-      status: "fail",
-      message: "Buku gagal ditambahkan",
-    });
-    response.code(500);
-    return response;
   },
   getAllBooksHandler(request, h) {
     const { name, reading, finished } = request.query;
@@ -96,8 +81,7 @@ module.exports = {
 
     if (name) {
       const filteredBooksName = books.filter((book) => {
-        const nameRegex = new RegExp(name, "gi");
-        return nameRegex.test(book.name);
+        return book.name.toLowerCase().includes(name.toLowerCase());
       });
       const response = h.response({
         status: "success",
@@ -202,10 +186,7 @@ module.exports = {
       return response;
     }
 
-    const finished = pageCount === readPage;
-    const updatedAt = new Date().toISOString();
     const index = books.findIndex((note) => note.id === bookId);
-
     if (index !== -1) {
       books[index] = {
         ...books[index],
@@ -217,8 +198,8 @@ module.exports = {
         pageCount,
         readPage,
         reading,
-        finished,
-        updatedAt,
+        finished: pageCount === readPage,
+        updatedAt: new Date().toISOString(),
       };
 
       const response = h.response({
